@@ -19,8 +19,8 @@ import {AuthContext} from '../context/auth-context';
 
 const windowHeight = Dimensions.get('window').height;
 
-const LoginScreen = () => {
-  const {setToken} = useContext(AuthContext);
+const LoginScreen = ({navigation}) => {
+  const {storeData} = useContext(AuthContext);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
@@ -34,7 +34,7 @@ const LoginScreen = () => {
         email,
         password,
       });
-      return setToken(response.data.data.token);
+      return await storeData(response.data.data.token);
     } catch (err) {
       Alert.alert(
         `Error - ${err.response.data.status}`,
@@ -86,10 +86,14 @@ const LoginScreen = () => {
               </View>
             </View>
             <View style={styles.signupContainer}>
-              <Text>OR</Text>
-              <View>
-                <Text>You don't have an account?</Text>
-                <Text>Singup</Text>
+              <Text style={styles.or}>OR</Text>
+              <View style={styles.signupInner}>
+                <Text style={styles.signupHelpText}>
+                  You don't have an account?
+                </Text>
+                <TouchableOpacity onPress={() => navigation.navigate('Signup')}>
+                  <Text style={styles.signupText}>Singup</Text>
+                </TouchableOpacity>
               </View>
             </View>
           </ImageBackground>
@@ -158,5 +162,25 @@ const styles = StyleSheet.create({
   },
   signupContainer: {
     flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  or: {
+    color: 'white',
+    fontSize: 30,
+    fontFamily: 'Raleway-BlackItalic',
+  },
+  signupInner: {
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  signupHelpText: {
+    color: 'white',
+  },
+  signupText: {
+    color: '#047857',
+    fontSize: 30,
+    fontWeight: '900',
   },
 });
