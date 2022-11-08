@@ -1,36 +1,27 @@
-import React, {useContext, useEffect} from 'react';
+import React, {useEffect} from 'react';
 import {NavigationContainer} from '@react-navigation/native';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import LoginScreen from '../screen/login-screen';
 import BooksScreen from '../screen/books-screen';
 import SignupScreen from '../screen/signup-screen';
-import {AuthContext} from '../context/auth-context';
+import SplashScreen from '../screen/splash-screen';
+import ProfileScreen from "../screen/profile-screen";
+import DrawerNavigation from "./drawer-navigation";
 
 const Stack = createNativeStackNavigator();
 
 const MainNavigation = () => {
-    const {isAuth} = useContext(AuthContext);
-
     return (
         <NavigationContainer>
             <Stack.Navigator
-                initialRouteName={isAuth ? 'Books' : 'Login'}
+                initialRouteName={'Main'}
                 screenOptions={{
                     headerShown: false,
                 }}>
-                {isAuth ? (
-                    <>
-                        <Stack.Screen name={'Books'} component={BooksScreen} />
-                    </>
-                ) : (
-                    <>
-                        <Stack.Screen name={'Login'} component={LoginScreen} />
-                        <Stack.Screen
-                            name={'Signup'}
-                            component={SignupScreen}
-                        />
-                    </>
-                )}
+                <Stack.Screen name={'Splash'} component={SplashScreen} />
+                <Stack.Screen name={'Main'} component={DrawerNavigation} />
+                <Stack.Screen name={'Login'} component={LoginScreen} />
+                <Stack.Screen name={'Signup'} component={SignupScreen} />
             </Stack.Navigator>
         </NavigationContainer>
     );

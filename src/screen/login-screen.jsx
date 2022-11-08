@@ -1,6 +1,6 @@
 import {
     Alert,
-    Dimensions,
+    BackHandler,
     ImageBackground,
     Keyboard,
     KeyboardAvoidingView,
@@ -13,17 +13,27 @@ import {
     View,
 } from 'react-native';
 import axios from 'axios';
-import React, {useContext, useRef, useState} from 'react';
+import React, {useContext, useEffect, useRef, useState} from 'react';
 import CoffeeBg from '../../assets/images/coffee_bg.jpg';
 import {AuthContext} from '../context/auth-context';
-import {ScrollView} from 'react-native-gesture-handler';
-
-const windowHeight = Dimensions.get('window').height;
 
 const LoginScreen = ({navigation}) => {
-    const {loginHandler} = useContext(AuthContext);
+    const {storeData} = useContext(AuthContext);
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
+
+    useEffect(() => {
+        const backAction = () => {
+            BackHandler.exitApp();
+        };
+
+        const backHandler = BackHandler.addEventListener(
+            'hardwareBackPress',
+            backAction,
+        );
+
+        return () => backHandler.remove();
+    }, []);
 
     const passwordRef = useRef(null);
 
@@ -36,7 +46,8 @@ const LoginScreen = ({navigation}) => {
                 email,
                 password,
             });
-            return await loginHandler(response.data.data.token);
+            await storeData(response.data.data.token);
+            return navigation.navigate('Profile');
         } catch (err) {
             Alert.alert(
                 `Error - ${err.response.data.status}`,

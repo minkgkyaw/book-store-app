@@ -1,5 +1,6 @@
 import {
     Alert,
+    BackHandler,
     Dimensions,
     Keyboard,
     KeyboardAvoidingView,
@@ -10,21 +11,33 @@ import {
     TouchableWithoutFeedback,
     View,
 } from 'react-native';
-import React, {useContext, useRef, useState} from 'react';
+import React, {useContext, useEffect, useRef, useState} from 'react';
 import axios from 'axios';
 import {AuthContext} from '../context/auth-context';
 import Ionicons from 'react-native-vector-icons/Ionicons';
-import {ScrollView} from 'react-native-gesture-handler';
 
 const windowHeight = Dimensions.get('window').height;
 
 const API_URL = 'https://mkk-book-store.herokuapp.com/api/v1/users/register';
 
 const SignupScreen = ({navigation}) => {
-    const {loginHandler} = useContext(AuthContext);
+    const {storeData} = useContext(AuthContext);
     const [name, setName] = useState('');
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
+
+    useEffect(() => {
+        const backAction = () => {
+            BackHandler.exitApp();
+        };
+
+        const backHandler = BackHandler.addEventListener(
+            'hardwareBackPress',
+            backAction,
+        );
+
+        return () => backHandler.remove();
+    }, []);
 
     const emailRef = useRef(null);
     const passwordRef = useRef(null);
@@ -36,7 +49,7 @@ const SignupScreen = ({navigation}) => {
                 email,
                 password,
             });
-            return await loginHandler(response.data.data.token);
+            return await storeData(response.data.data.token);
         } catch (err) {
             setEmail('');
             setPassword('');
